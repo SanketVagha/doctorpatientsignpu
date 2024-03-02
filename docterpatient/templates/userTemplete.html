@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title> {% block title %} {% endblock title %} | Doctor Patient</title>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="alert">
+        <a class="navbar-brand" href="/"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/#">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/contact">Contact Us</a>
+            </li>
+          </ul>
+        </div>
+    </nav>
+
+    {% if messages %}
+    {% for message in messages %}
+
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      <strong> {{ message }} </strong>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+    {% block body %}   {% endblock body %}
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+
+    <script>
+        $(document).on()
+        $("#signup").validate({
+            errorClass: "error text-left",
+            ErrorEvent: "div",
+            // errorPlacement
+            rules:{
+                fname:{
+                    required: true,
+                },
+                lname:{
+                    required: true,
+                },
+                email:{
+                    required: true,
+                    email : true,
+                    remote: {
+                        url: "/checkemailExists",
+                        type: "post",
+                        data: {
+                            "<?php echo $this->security->get_csrf_token_name()?>":"<?php echo $this->security->get_csrf_hash()?>",
+                            email: function () {    
+                                return $("#emailclone").val();
+                            }
+                        }
+                    },
+                },
+                username:{
+                    required: true,
+                    remote: {
+                        url: "<?php echo base_url('auth/checkProviderValidEmail'); ?>",
+                        type: "post",
+                        data: {
+                            "<?php echo $this->security->get_csrf_token_name()?>":"<?php echo $this->security->get_csrf_hash()?>",
+                            email: function () {    
+                                return $("#emailclone").val();
+                            }
+                        }
+                    },
+                },
+                userType:{
+                    required: true,
+                },
+                password:{
+                    required: true,
+                    minlength: 8,
+                    maxlength: 20,
+                },
+                cpassword:{
+                    required: true,
+                    equalTo:"#password"
+                },
+                address:{
+                    required: true,
+                },
+                city:{
+                    required: true,
+                },
+                state:{
+                    required: true,
+                },
+                pincode:{
+                    required: true,
+                },
+                profile_image:{
+                    required: true,
+                }
+            },
+            messages:{
+                fname:{
+                    required: "Please Enter First Name",
+                },
+                lname:{
+                    required: "Please Enter Last Name",
+                },
+                email:{
+                    required: "Please Enter Your Email Id",
+                    email : "Please Enter Valid Email Id",
+                    remote: "Email Id Already Exists"
+                },
+                username:{
+                    required: "Please Enter Username",
+                    remote: "Username Already Exists",
+                },
+                userType:{
+                    required: "Please Select Profession",
+                },
+                password:{
+                    required: "Please  Enter Password",
+                },
+                cpassword:{
+                    required: "please Enter Confirm Password",
+                    equalTo: "Password do not match"
+                },
+                address:{
+                    required: "Please Enter Address",
+                },
+                city:{
+                    required: "Please Enter City",
+                },
+                state:{
+                    required: "Please Enter State",
+                },
+                pincode:{
+                    required: "Please Enter Pincode",
+                },
+                profile_image:{
+                    required: "Please Upload Profile Image",
+                }
+            },
+        });
+    </script>
+
+</body>
+</html>
