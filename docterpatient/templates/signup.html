@@ -5,8 +5,8 @@
 {% block body %}
 
 <div class="container">
-    {% csrf_token %} 
     <form action="/signup" id="signup" name="signup" method="post" enctype="multipart/form-data">
+        {% csrf_token %} 
         <div class="form-group">
             <label for="fname">First Name : </label>
             <input type="text" name="fname" id="fname">
@@ -18,15 +18,20 @@
         <div class="form-group">
             <label for="email">Email Id : </label>
             <input type="email" name="email" id="email">
+            <label class="emailErr"></label>
         </div>
         <div class="form-group">
             <label for="username">Username : </label>
             <input type="text" name="username" id="username">
+            <label class="usernameErr"></label>
+
         </div>
         <div class="form-group">
             <label for="userType">User Type : </label>
             <input type="radio" value="0" name="userType" id="patient"> <label for="patient"> Patient </label>
             <input type="radio" value="1" name="userType" id="doctor"> <label for="doctor"> Doctor </label>
+            <lable class="userTypeErr"></lable>
+
         </div>
         <div class="form-group">
             <label for="password">Password : </label>
@@ -61,5 +66,6 @@
         </div>
     </form>
 </div>
+
 
 {% endblock body %}

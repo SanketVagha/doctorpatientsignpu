@@ -1,0 +1,40 @@
+{% extends "userTemplete.html" %}
+
+{% block title %}sign up{% endblock title %}
+
+{% block body %}
+
+
+<table style="border:5px solid, ">
+
+    <tr style="border:5px solid; text-align: center">
+      <td style="border:5px solid; padding: 10px; ">First Name</td>
+      <td style="border:5px solid; padding: 10px; ">Last Name</td>
+      <td style="border:5px solid; padding: 10px; ">Email</td>
+      <td style="border:5px solid; padding: 10px; ">Username</td>
+      <td style="border:5px solid; padding: 10px; ">Address</td>
+      <td style="border:5px solid; padding: 10px; ">city</td>
+      <td style="border:5px solid; padding: 10px; ">state</td>
+      <td style="border:5px solid; padding: 10px; ">pincode</td>
+      <td style="border:5px solid; padding: 10px; ">Profile Picture</td>
+    </tr>
+  
+  {% if cont %}
+    {% for i in cont %}
+      <tr style="border:5px solid; text-align: center">
+        <td style="border:5px solid; padding: 10px; ">{{i.fname}}</td>
+        <td style="border:5px solid; padding: 10px; ">{{i.lname}}</td>
+        <td style="border:5px solid; padding: 10px; ">{{i.email}}</td>
+        <td style="border:5px solid; padding: 10px; ">{{i.username}}</td>
+        <td style="border:5px solid; padding: 10px; ">{{i.address}}</td>
+        <td style="border:5px solid; padding: 10px; ">{{i.city}}</td>
+        <td style="border:5px solid; padding: 10px; ">{{i.state}}</td>
+        <td style="border:5px solid; padding: 10px; ">{{i.pincode}}</td>
+        <!-- <td style="border:5px solid; padding: 10px; ">{{i.date}}</td> -->
+        <td style="border:5px solid; padding: 10px; "><img src="/static/image/upload/{{i.profile_image}}" alt="images" srcset="" style="width: 10%;"></td>
+      </tr>
+    {% endfor%}
+  {% endif%}
+  </table>
+
+{% endblock body %}

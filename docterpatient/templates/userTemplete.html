@@ -4,6 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -27,9 +28,12 @@
               <a class="nav-link" href="/#">About Us</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/contact">Contact Us</a>
+              <a class="nav-link" href="/#">Contact Us</a>
             </li>
-          </ul>
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+         </ul>
         </div>
     </nav>
 
@@ -53,48 +57,52 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
 
     <script>
-        $(document).on()
+
+    $.validator.addMethod("strongPassword", function(value, element) {
+        return this.optional(element) || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
+    }, "Please enter a strong password");
+    
+    $.validator.addMethod("lettersOnly", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+    }, "Please enter only letters");
+    
+    $(document).ready(function() {
         $("#signup").validate({
             errorClass: "error text-left",
             ErrorEvent: "div",
+            errorPlacement: function(error, element) {
+                if (element.attr("name") == "email"){
+                    error.insertAfter(".emailErr");
+                }else if (element.attr("name") == "userType"){
+                    error.insertAfter(".userTypeErr");
+                }else if (element.attr("name") == "username"){
+                    error.insertAfter(".usernameErr");
+                }else{
+                    error.insertAfter($(element));
+                }
+            },
             // errorPlacement
             rules:{
                 fname:{
                     required: true,
+                    lettersOnly: true,
                 },
                 lname:{
                     required: true,
+                    lettersOnly: true
                 },
                 email:{
                     required: true,
                     email : true,
-                    remote: {
-                        url: "/checkemailExists",
-                        type: "post",
-                        data: {
-                            "<?php echo $this->security->get_csrf_token_name()?>":"<?php echo $this->security->get_csrf_hash()?>",
-                            email: function () {    
-                                return $("#emailclone").val();
-                            }
-                        }
-                    },
                 },
                 username:{
                     required: true,
-                    remote: {
-                        url: "<?php echo base_url('auth/checkProviderValidEmail'); ?>",
-                        type: "post",
-                        data: {
-                            "<?php echo $this->security->get_csrf_token_name()?>":"<?php echo $this->security->get_csrf_hash()?>",
-                            email: function () {    
-                                return $("#emailclone").val();
-                            }
-                        }
-                    },
                 },
                 userType:{
                     required: true,
@@ -102,7 +110,7 @@
                 password:{
                     required: true,
                     minlength: 8,
-                    maxlength: 20,
+                    strongPassword: true,
                 },
                 cpassword:{
                     required: true,
@@ -113,12 +121,17 @@
                 },
                 city:{
                     required: true,
+                    lettersOnly: true,
                 },
                 state:{
                     required: true,
+                    lettersOnly: true,
                 },
                 pincode:{
                     required: true,
+                    digits: true,
+                    minlength: 6,
+                    maxlength: 6,
                 },
                 profile_image:{
                     required: true,
@@ -127,24 +140,26 @@
             messages:{
                 fname:{
                     required: "Please Enter First Name",
+                    lettersOnly: "Only letters are allowed",
                 },
                 lname:{
                     required: "Please Enter Last Name",
+                    lettersOnly: "Only letters are allowed",
                 },
                 email:{
                     required: "Please Enter Your Email Id",
                     email : "Please Enter Valid Email Id",
-                    remote: "Email Id Already Exists"
                 },
                 username:{
                     required: "Please Enter Username",
-                    remote: "Username Already Exists",
                 },
                 userType:{
                     required: "Please Select Profession",
                 },
                 password:{
                     required: "Please  Enter Password",
+                    minlength: "Password must be at least 8 characters long",
+                    strongPassword: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
                 },
                 cpassword:{
                     required: "please Enter Confirm Password",
@@ -155,18 +170,61 @@
                 },
                 city:{
                     required: "Please Enter City",
+                    lettersOnly: "Only letters are allowed",
                 },
                 state:{
                     required: "Please Enter State",
+                    lettersOnly: "Only letters are allowed",
                 },
                 pincode:{
-                    required: "Please Enter Pincode",
+                    required:  "Please enter your PIN code",
+                    digits: "PIN code must contain only digits",
+                    minlength: "PIN code must be exactly 6 digits",
+                    maxlength: "PIN code must be exactly 6 digits",
                 },
                 profile_image:{
                     required: "Please Upload Profile Image",
                 }
             },
         });
+    });
+    
+    $(document).ready(function() {
+        $("#login").validate({
+            errorClass: "error text-left",
+            ErrorEvent: "div",
+            errorPlacement: function(error, element) {
+                if (element.attr("name") == "email"){
+                    error.insertAfter(".emailErr");
+                }else{
+                    error.insertAfter($(element));
+                }
+            },
+            // errorPlacement
+            rules:{
+                email:{
+                    required: true,
+                    email : true,
+                },
+                password:{
+                    required: true,
+                    minlength: 8,
+                    strongPassword: true,
+                },
+            },
+            messages:{
+                email:{
+                    required: "Please Enter Your Email Id",
+                    email : "Please Enter Valid Email Id",
+                },
+                password:{
+                    required: "Please  Enter Password",
+                    minlength: "Password must be at least 8 characters long",
+                    strongPassword: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                },
+            },
+        });
+    });
     </script>
 
 </body>

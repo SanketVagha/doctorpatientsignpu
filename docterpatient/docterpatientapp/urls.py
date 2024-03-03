@@ -7,7 +7,9 @@ from django.conf import settings
 urlpatterns = [
     path('', views.index, name="home"),
     path('checkemailExists', views.checkemailExists, name="checkemailExists"),
-    path('signup', views.signup, name="signup")
+    path('checkuserExists', views.checkuserExists, name="checkuserExists"),
+    path('signup', views.signup, name="signup"),
+    path('login', views.login, name="login")
 ]
 
 
