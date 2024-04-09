@@ -4,7 +4,7 @@
 
 {% block body %}
 
-<div class="container">
+<div class="container mt-5">
     <form action="/login" id="login" name="login" method="post" enctype="multipart/form-data">
         {% csrf_token %} 
         <div class="form-group">
@@ -20,5 +20,8 @@
             <input type="submit" name="submit" id="submit" value="SUBMIT">
         </div>
     </form>
+    <div>
+        Not have User Account <a href= "{% url "signup" %}">Signup </a>
+    </div>
 </div>
 {% endblock body %}
