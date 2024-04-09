@@ -9,7 +9,8 @@ urlpatterns = [
     path('checkemailExists', views.checkemailExists, name="checkemailExists"),
     path('checkuserExists', views.checkuserExists, name="checkuserExists"),
     path('signup', views.signup, name="signup"),
-    path('login', views.login, name="login")
+    path('login', views.login, name="login"),
+    path('profile/<int:id>', views.profile, name="profile")
 ]
 
 

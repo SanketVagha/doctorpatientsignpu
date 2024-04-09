@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from datetime import datetime
 from docterpatientapp.models import User
 from django.contrib import messages
@@ -35,23 +35,27 @@ def checkuserExists(request):
         return JsonResponse({'exists': user_exists})
     return JsonResponse({'error': 'Invalid request'})
 
+def profile(request,id):
+    user = User.objects.filter(id = id).values()
+    context = {
+        'cont' : user
+    }
+    return render(request, 'profile.html', context)
 
 def signup(request):
     if request.method == 'POST':
         data = {}
         existing_record = None
-        date = datetime.today().strftime("%Y-%m-%d")
         if request.POST.get("fname"):
-            fname = request.POST.get("fname")
+            data['fname'] = request.POST.get("fname")
             
         if request.POST.get("lname"):
-            lname = request.POST.get("lname")
+            data['lname'] = request.POST.get("lname")
             
-        email = ""
         if request.POST.get("email"):
-            email = request.POST.get("email")
+            data['email'] = request.POST.get("email")
             
-        nemail = User.objects.filter(email = email).count()
+        nemail = User.objects.filter(email = data['email']).count()
         if nemail > 0:
             messages.success(request, "Email Already Exists!")
             context = {
@@ -59,11 +63,10 @@ def signup(request):
             }
             return render(request, 'signup.html', context)
 
-        username = ""
         if request.POST.get("username"):
-            username = request.POST.get("username")
+            data['username'] = request.POST.get("username")
             
-        nusername = User.objects.filter(username = username).count()
+        nusername = User.objects.filter(username = data['username']).count()
         if nusername > 0:
             messages.success(request, "Username Already Exists!")
             context = {
@@ -72,22 +75,22 @@ def signup(request):
             return render(request, 'signup.html', context)
 
         if request.POST.get("userType"):
-            userType = request.POST.get("userType")
+            data['userType'] = request.POST.get("userType")
             
         if request.POST.get("password"):
-            password = request.POST.get("password")
+            data['password'] = hashlib.md5(request.POST.get("password").encode()).hexdigest()
             
         if request.POST.get("address"):
-            address = request.POST.get("address")
+            data['address'] = request.POST.get("address")
             
         if request.POST.get("city"):
-            city = request.POST.get("city")
+            data['city'] = request.POST.get("city")
             
         if request.POST.get("state"):
-            state = request.POST.get("state")
+            data['state'] = request.POST.get("state")
             
         if request.POST.get("pincode"):
-            pincode = request.POST.get("pincode")
+            data['pincode'] = request.POST.get("pincode")
 
 
         if len(request.FILES) != 0:
@@ -111,15 +114,11 @@ def signup(request):
             form = FileUploadForm(data, request.FILES , instance=existing_record)
             if form.is_valid():
                 form.save()
-            user = User(fname = fname,  lname = lname, email = email, username = username, userType = userType,password= hashlib.md5(password.encode()).hexdigest(), address= address, city= city, state= state, pincode= pincode, profile_image = new_file_name)
+            user = User.objects.filter().create(**data)
             user.save()
-            
             messages.success(request, "You Message has been sent!")
-        user = User.objects.all()
-        context = {
-            'cont' : user
-        }
-        return render(request, 'profile.html', context)
+        # return render(request, 'profile.html', context)
+        return redirect("profile",user.id)
     context = {
 
     }
@@ -132,14 +131,13 @@ def login(request):
         if request.POST.get("password"):
             password = request.POST.get("password")
         
-        user = User.objects.filter(email= email, password= hashlib.md5(password.encode()).hexdigest()).all()
+        user = list(User.objects.filter(email= email, password= hashlib.md5(password.encode()).hexdigest()).values())
+        print(user)
         if not user:
             messages.success(request, "Invalid Email and Password!")
             return render(request, 'login.html')
-        context = {
-            "cont" : user
-        }
-        return render(request, 'profile.html', context)        
+        return redirect("profile", user[0]['id'])
+
     context = {
         
     }
